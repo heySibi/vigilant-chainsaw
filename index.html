@@ -2,25 +2,25 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflics - Smart Resume</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Netflics - Universal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* (STESSO CSS DI PRIMA - NON CAMBIARE NULLA QUI) */
+        /* --- CSS BASE --- */
         :root { --primary: #e50914; --dark: #141414; --light: #fff; --gray: #bcbcbc; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: var(--dark); color: var(--light); padding-bottom: 50px; overflow-x: hidden; line-height: 1.4; }
         .header { position: fixed; top: 0; width: 100%; padding: 20px 4%; background: linear-gradient(180deg, rgba(0,0,0,0.7) 10%, transparent); display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: 0.3s; }
         .header.scrolled { background-color: #141414; }
         .logo { font-size: 25px; font-weight: bold; color: var(--primary); text-transform: uppercase; cursor: pointer; letter-spacing: 1px; }
         .search-container { display: flex; gap: 10px; background: rgba(0,0,0,0.75); border: 1px solid #fff; padding: 5px 10px; border-radius: 4px; }
-        .search-input { background: transparent; border: none; color: #fff; outline: none; width: 200px; }
+        .search-input { background: transparent; border: none; color: #fff; outline: none; width: 200px; font-size: 14px; }
         .hero { height: 80vh; position: relative; background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 4%; margin-top: -80px; }
         .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, transparent 60%); }
         .hero::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 150px; background: linear-gradient(to top, var(--dark), transparent); }
         .hero-content { position: relative; z-index: 10; max-width: 650px; margin-top: 80px; }
         .hero-title { font-size: 3.5rem; margin-bottom: 20px; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.1; }
-        .hero-overview { font-size: 1.2rem; margin-bottom: 25px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); line-height: 1.5; color: #fff; }
+        .hero-overview { font-size: 1.2rem; margin-bottom: 25px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); line-height: 1.5; color: #fff; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .btn { padding: 12px 30px; border-radius: 4px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-right: 15px; transition: transform 0.2s; }
         .btn:hover { transform: scale(1.05); }
         .btn-play { background: #fff; color: #000; }
@@ -34,35 +34,78 @@
         .genre-pill.active, .genre-pill:hover { background: #fff; color: #000; border-color: #fff; }
         .content-section { padding: 30px 0; padding-left: 4%; overflow: visible; }
         .row-header { font-size: 1.5rem; margin-bottom: 15px; color: #e5e5e5; font-weight: 600; letter-spacing: 0.5px; }
-        .row-container { display: flex; gap: 10px; overflow-x: auto; padding: 40px 0; margin-top: -40px; padding-right: 4%; scroll-behavior: smooth; }
+        .row-container { display: flex; gap: 10px; overflow-x: auto; padding: 40px 0; margin-top: -40px; padding-right: 4%; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .row-container::-webkit-scrollbar { display: none; }
+        
         .card { flex: 0 0 auto; width: 200px; height: 300px; border-radius: 4px; position: relative; cursor: pointer; transition: all 0.3s ease-in-out; background: #222; }
+        
+        /* --- FIX TAGLIO SINISTRA --- */
+        /* Il primo elemento si espande verso destra, l'ultimo verso sinistra */
+        .card:first-child { transform-origin: left center; }
+        .card:last-child { transform-origin: right center; }
+        /* Gli altri rimangono di default (center center) */
+
         .card:hover { transform: scale(1.2); z-index: 100; box-shadow: 0 10px 20px rgba(0,0,0,0.7); border-radius: 6px; }
+        
         .card img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #141414 10%, rgba(20,20,20,0.9) 50%, transparent 100%); padding: 15px 10px 10px 10px; opacity: 0; transition: opacity 0.3s ease; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; display: flex; flex-direction: column; gap: 8px; }
+        .card-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #141414 10%, rgba(20,20,20,0.9) 60%, transparent 100%); padding: 15px 10px 10px 10px; opacity: 0; transition: opacity 0.3s ease; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px; display: flex; flex-direction: column; gap: 6px; }
         .card:hover .card-overlay { opacity: 1; }
         .card-btns { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .mini-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.7); background: rgba(40,40,40,0.6); color: #fff; display: flex; justify-content: center; align-items: center; font-size: 12px; transition: 0.2s; }
         .mini-btn:hover { background: #fff; color: #000; border-color: #fff; }
         .mini-btn.play { background: #fff; color: #000; border-color: #fff; }
-        .card-info-title { font-size: 13px; font-weight: bold; text-shadow: 1px 1px 2px #000; }
-        .card-meta { font-size: 10px; color: #46d369; font-weight: 700; display: flex; gap: 8px; align-items: center; }
-        .card-meta span.hd { border: 1px solid #aaa; padding: 0 4px; border-radius: 2px; color: #aaa; font-weight: normal; }
+        .card-info-title { font-size: 13px; font-weight: bold; text-shadow: 1px 1px 2px #000; margin-bottom: 2px; }
+        .card-meta { font-size: 10px; color: #fff; font-weight: bold; display: flex; gap: 8px; align-items: center; }
+        .card-meta span.hd { border: 1px solid #bcbcbc; padding: 0 4px; border-radius: 2px; color: #bcbcbc; font-weight: normal; font-size: 9px; }
+        
+        /* --- NUOVO STILE GENERI --- */
+        .card-genres { font-size: 9px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; margin-top: 2px; }
+
+        /* Modal & Player */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; overflow-y: auto; backdrop-filter: blur(8px); }
         .modal-box { background: #181818; width: 90%; max-width: 850px; margin: 50px auto; border-radius: 10px; position: relative; padding-bottom: 40px; box-shadow: 0 0 50px rgba(0,0,0,0.5); overflow: hidden; }
         .modal-close { position: absolute; top: 15px; right: 15px; background: #181818; color: #fff; border: none; font-size: 24px; cursor: pointer; z-index: 20; width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
-        .modal-close:hover { background: #333; }
         .modal-hero { height: 450px; background-size: cover; background-position: center; position: relative; }
         .modal-hero::after { content:''; position: absolute; inset: 0; background: linear-gradient(to top, #181818, transparent); }
         .modal-info { padding: 0 40px; margin-top: -50px; position: relative; z-index: 10; }
-        .modal-title { font-size: 3rem; font-weight: 800; margin-bottom: 10px; }
+        .modal-title { font-size: 3rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
         .modal-meta-row { display: flex; gap: 15px; color: #46d369; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; align-items: center; }
         .modal-overview { font-size: 1.1rem; line-height: 1.6; color: #d2d2d2; margin-bottom: 30px; max-width: 80%; }
         .video-player { display: none; position: fixed; inset: 0; background: #000; z-index: 3000; }
         .video-player iframe { width: 100%; height: 100%; border: none; }
-        .close-player { position: absolute; top: 30px; right: 30px; background: transparent; color: #fff; border: 2px solid #fff; padding: 10px 25px; cursor: pointer; z-index: 3001; font-weight: bold; border-radius: 4px; font-size: 1rem; }
-        .close-player:hover { background: #fff; color: #000; }
+        .close-player { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: #fff; border: 2px solid #fff; padding: 8px 15px; cursor: pointer; z-index: 3001; font-weight: bold; border-radius: 4px; font-size: 0.9rem; }
         .error-msg { color: #e50914; padding: 20px; text-align: center; margin-top: 50px; font-size: 1.2rem; }
+
+        /* --- MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 2.5rem; }
+            .card { width: 160px; height: 240px; }
+            .card:hover { transform: scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .header { padding: 15px 4%; background: #141414; }
+            .logo { font-size: 20px; }
+            .search-input { width: 120px; }
+            .hero { height: 60vh; margin-top: 0; padding-top: 60px; align-items: flex-end; padding-bottom: 20px; }
+            .hero-content { margin-top: 0; width: 100%; }
+            .hero-title { font-size: 2rem; }
+            .hero-overview { font-size: 1rem; -webkit-line-clamp: 3; max-width: 100%; margin-bottom: 15px; }
+            .btn { padding: 8px 20px; font-size: 0.9rem; margin-right: 10px; }
+            .nav-tabs { gap: 20px; margin: 0 0 20px 0; }
+            .nav-tab { font-size: 0.9rem; padding: 8px; }
+            .card { width: 130px; height: 195px; }
+            .row-header { font-size: 1.1rem; margin-bottom: 10px; }
+            .modal-box { width: 100%; height: 100%; margin: 0; border-radius: 0; overflow-y: scroll; padding-bottom: 80px; }
+            .modal-hero { height: 30vh; }
+            .modal-info { padding: 0 20px; margin-top: -30px; }
+            .modal-title { font-size: 1.8rem; }
+            .modal-overview { font-size: 0.95rem; max-width: 100%; }
+            #seriesControls { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+            #seriesControls select { width: 100%; height: 45px; font-size: 16px; margin: 0; }
+            .modal-info > div[style*="display: flex"] { flex-direction: column; gap: 10px; }
+            .modal-info .btn { width: 100%; margin: 0; text-align: center; padding: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -70,8 +113,8 @@
     <header class="header" id="header">
         <div class="logo" onclick="location.reload()">NETFLICS</div>
         <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Titoli, persone, generi">
-            <i class="fas fa-search" style="color:white"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Cerca...">
+            <i class="fas fa-search" style="color:white; margin-top: 2px;"></i>
         </div>
     </header>
 
@@ -81,7 +124,7 @@
             <p class="hero-overview" id="heroOverview">Scegli una categoria o cerca un film.</p>
             <div class="hero-buttons">
                 <button class="btn btn-play" id="heroPlayBtn"><i class="fas fa-play"></i> Riproduci</button>
-                <button class="btn btn-info" id="heroInfoBtn"><i class="fas fa-info-circle"></i> Altre Info</button>
+                <button class="btn btn-info" id="heroInfoBtn"><i class="fas fa-info-circle"></i> Info</button>
             </div>
         </div>
     </div>
@@ -96,7 +139,7 @@
     <div id="mainContent"></div>
 
     <div class="video-player" id="videoPlayer">
-        <button class="close-player" onclick="closePlayer()">CHIUDI PLAYER</button>
+        <button class="close-player" onclick="closePlayer()">CHIUDI</button>
         <iframe id="playerFrame" allowfullscreen></iframe>
     </div>
 
@@ -112,9 +155,10 @@
                     <div style="margin-bottom:10px; color:#aaa; font-size:0.9rem;">
                         <i class="fas fa-history"></i> Ultimo visto: <span id="lastWatchedLabel" style="color:#fff; font-weight:bold;">Mai visto</span>
                     </div>
-                    <label style="color:#ccc; margin-right: 10px;">Stagione:</label>
-                    <select id="seasonSelect" onchange="updateEpisodes()" style="padding:8px; background:#444; color:#fff; border:none; border-radius:4px; margin-right:15px;"></select>
-                    <select id="episodeSelect" style="padding:8px; background:#444; color:#fff; border:none; border-radius:4px;"></select>
+                    <div style="display:flex; flex-wrap:wrap; gap:10px;">
+                        <select id="seasonSelect" onchange="updateEpisodes()" style="flex:1; padding:8px; background:#444; color:#fff; border:none; border-radius:4px; min-width: 120px;"></select>
+                        <select id="episodeSelect" style="flex:2; padding:8px; background:#444; color:#fff; border:none; border-radius:4px; min-width: 150px;"></select>
+                    </div>
                 </div>
 
                 <p id="modalOverview" class="modal-overview"></p>
@@ -136,6 +180,7 @@
         let state = {
             type: 'movie',
             modalItem: null,
+            genres: {}, // Mappa per salvare i nomi dei generi
             myList: JSON.parse(localStorage.getItem('netflics_list')) || {},
             continueWatching: JSON.parse(localStorage.getItem('netflics_cw')) || {}
         };
@@ -176,7 +221,7 @@
                 await loadRows();
             } catch (error) {
                 console.error(error);
-                document.getElementById('mainContent').innerHTML = `<div class="error-msg">Errore di connessione API.</div>`;
+                document.getElementById('mainContent').innerHTML = `<div class="error-msg">Errore di connessione API. Controlla la rete.</div>`;
             }
         }
 
@@ -190,6 +235,10 @@
             const data = await fetchAPI(`/genre/${state.type}/list`);
             const div = document.getElementById('genreFilters');
             if(data && data.genres) {
+                // Salviamo i generi nella mappa globale
+                state.genres = {};
+                data.genres.forEach(g => state.genres[g.id] = g.name);
+
                 div.innerHTML = `<span class="genre-pill active" onclick="initContent()">Tutti</span>` + 
                 data.genres.map(g => `<span class="genre-pill" onclick="filterGenre(${g.id})">${g.name}</span>`).join('');
             }
@@ -245,21 +294,21 @@
                     card.className = 'card';
                     const img = item.poster_path ? IMG_SMALL + item.poster_path : IMG_SMALL + item.poster;
                     
-                    const rating = item.vote_average ? Math.round(item.vote_average * 10) : '90';
+                    // Recupero i nomi dei generi (max 3)
+                    const genreList = item.genre_ids ? item.genre_ids.slice(0, 3).map(id => state.genres[id]).filter(Boolean).join(' • ') : '';
                     
                     card.innerHTML = `
-                        <img src="${img}" loading="lazy">
+                        <img src="${img}" loading="lazy" alt="${item.title || item.name}">
                         <div class="card-overlay">
                             <div class="card-btns">
                                 <div class="mini-btn play"><i class="fas fa-play"></i></div>
                                 <div class="mini-btn"><i class="fas fa-plus"></i></div>
-                                <div class="mini-btn" style="margin-left:auto;"><i class="fas fa-chevron-down"></i></div>
                             </div>
                             <div class="card-info-title">${item.title || item.name}</div>
                             <div class="card-meta">
-                                <span>${rating}% Match</span>
                                 <span class="hd">HD</span>
                             </div>
+                            <div class="card-genres">${genreList}</div>
                         </div>
                     `;
                     
@@ -279,7 +328,7 @@
             try { details = await fetchAPI(`/${type}/${item.id}`); } catch(e){}
 
             document.getElementById('modalTitle').innerText = details.title || details.name;
-            document.getElementById('modalOverview').innerText = details.overview || 'Nessuna descrizione.';
+            document.getElementById('modalOverview').innerText = details.overview || 'Nessuna descrizione disponibile.';
             
             const backdrop = details.backdrop_path ? `${IMG_URL}${details.backdrop_path}` : '';
             document.getElementById('modalBackdrop').style.backgroundImage = `url(${backdrop})`;
@@ -333,6 +382,7 @@
             }
 
             document.getElementById('modal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Blocca scroll sotto
             if(autoplay) playCurrentMedia();
         }
 
@@ -342,9 +392,8 @@
             epSelect.innerHTML = '<option>Caricamento...</option>';
             try {
                 const data = await fetchAPI(`/tv/${state.modalItem.id}/season/${s}`);
-                epSelect.innerHTML = data.episodes.map(e => `<option value="${e.episode_number}">Episodio ${e.episode_number}: ${e.name}</option>`).join('');
+                epSelect.innerHTML = data.episodes.map(e => `<option value="${e.episode_number}">Ep. ${e.episode_number}: ${e.name.substring(0,25)}...</option>`).join('');
                 
-                // Se abbiamo un episodio target (es. dal continue watching), selezionalo
                 if(targetEpisode) epSelect.value = targetEpisode;
 
             } catch(e) {
@@ -396,16 +445,23 @@
             document.getElementById('modalListBtn').innerHTML = state.myList[item.id] ? '<i class="fas fa-check"></i> Rimuovi' : '<i class="fas fa-plus"></i> La mia Lista';
         }
 
-        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        function closeModal() { 
+            document.getElementById('modal').style.display = 'none'; 
+            document.body.style.overflow = 'auto'; // Riabilita scroll
+        }
         
         document.getElementById('searchInput').addEventListener('keypress', async (e) => {
             if(e.key === 'Enter') {
                 const q = e.target.value;
+                if(!q) return;
                 const movies = await fetchAPI(`/search/movie?query=${q}`);
                 const tv = await fetchAPI(`/search/tv?query=${q}`);
                 document.getElementById('mainContent').innerHTML = '';
-                createRow('Risultati Film', movies.results);
-                createRow('Risultati Serie TV', tv.results);
+                if(movies.results.length) createRow('Film Trovati', movies.results);
+                if(tv.results.length) createRow('Serie TV Trovate', tv.results);
+                if(!movies.results.length && !tv.results.length) {
+                    document.getElementById('mainContent').innerHTML = '<div style="text-align:center; padding:50px; color:#aaa;">Nessun risultato trovato.</div>';
+                }
             }
         });
     </script>
